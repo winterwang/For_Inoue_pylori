@@ -1,8 +1,8 @@
 ---
-title: "幻灯忍者"
-subtitle: "写轮眼"
-author: "谢益辉"
-date: "2016/12/12"
+title: "Prevalence of _H. Pylori_ Infection by birth year"
+subtitle: "A meta regression analysis"
+author: "Chaochen Wang 王超辰"
+date: "2017/7/14"
 output:
   xaringan::moon_reader:
     css: zh-CN.css
@@ -26,14 +26,14 @@ background-image: url(https://upload.wikimedia.org/wikipedia/commons/b/be/Sharin
 ---
 class: center, middle
 
-# xaringan
+# xaringan dadafda
 
 ### /ʃæ.'riŋ.ɡæn/
 
 ---
 class: inverse, center, middle
 
-# 出发！
+# 出发！eee
 
 ---
 
@@ -48,6 +48,7 @@ if (!requireNamespace("xaringan"))
 
 --
 
+dddd
 除非你是六指琴魔，否则我建议安装 [RStudio 编辑器](https://www.rstudio.com/products/rstudio/)，它会让你做幻灯片做得飞起。
 
 - 从菜单 `File -> New File -> R Markdown -> From Template -> Ninja Presentation (Simplified Chinese)` 创建一个新文档；

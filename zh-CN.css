@@ -20,9 +20,9 @@
        url('https://github.com/yihui/xaringan/releases/download/v0.1/source-code-pro.woff') format('woff');
 }
 
-body { font-family: 'Droid Serif', 'Palatino Linotype', 'Book Antiqua', Palatino, 'Songti SC', serif; }
+body { font-family: 'Droid Serif', 'Palatino Linotype', 'Book Antiqua', Palatino, 'Songti SC', ’ヒラギノ角ゴ Pro W3’, ‘Hiragino Kaku Gothic Pro’, メイリオ, Meiryo, Osaka, ‘MS Pゴシック’, ‘MS PGothic’, sans-serif, serif; }
 h1, h2, h3 {
-  font-family: 'Yanone Kaffeesatz', 'Palatino Linotype', 'Book Antiqua', Palatino, 'STHeiti', 'SimHei', 'Microsoft YaHei';
+  font-family: 'Yanone Kaffeesatz', 'Palatino Linotype', 'Book Antiqua', Palatino, 'STHeiti', 'SimHei', 'Microsoft YaHei', 'Hiragino Kaku Gothic Pro',
   font-weight: normal;
 }
 a, a > code {
@@ -80,3 +80,9 @@ blockquote {
   border-left: solid 5px lightgray;
   padding-left: 1em;
 }
+
+.title-slide {
+  background-image: url(fig/dna.jpg);
+  background-size: cover;
+}
+
