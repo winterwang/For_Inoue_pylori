@@ -103,7 +103,7 @@ weight<-meta$w.random # Weight of each data point extracted
 
 ```{r, eval=FALSE}
 ########################   MODEL 1  ###############################
-res1 <- gam(cbind(mp,n_total-mp) ~ s(Birth_Year, bs="cr") +
+res1 <- gam(cbind(event,n) ~ s(Birth_Year, bs="cr") +
                                       # Cubic Spline Regression 三次スプライン曲線
               s(Study_ID, bs="re") +  # Study ID as random effect 
               Source_of_population +  # Community OR Clinical based 
@@ -113,13 +113,13 @@ res1 <- gam(cbind(mp,n_total-mp) ~ s(Birth_Year, bs="cr") +
               data = data, weights=weight, 
               family="binomial"(link=logit), method="REML")
 ########################   MODEL 2 ################################
-res2 <- gam(cbind(mp,n_total-mp) ~ s(Birth_Year, bs="cr") +
+res2 <- gam(cbind(event,n) ~ s(Birth_Year, bs="cr") +
               s(Study_ID, bs="re") +  
               Specimen_type,
               data = data, weights=weight, 
               family="binomial"(link=logit), method="REML")
 ########################   MODEL 3 ################################
-res3 <- gam(cbind(mp,n_total-mp) ~ s(Birth_Year, bs="cr") +
+res3 <- gam(cbind(event,n) ~ s(Birth_Year, bs="cr") +
               s(Study_ID, bs="re"),
               data = data, weights=weight, 
               family="binomial"(link=logit), method="REML")
@@ -127,57 +127,59 @@ res3 <- gam(cbind(mp,n_total-mp) ~ s(Birth_Year, bs="cr") +
 
 
 ---
-
+class: middle
 
 <style type="text/css">
 .tg  {border-collapse:collapse;border-spacing:0;border-color:#ccc;}
 .tg td{font-family:Arial, sans-serif;font-size:14px;padding:10px 5px;border-style:solid;border-width:0px;overflow:hidden;word-break:normal;border-color:#ccc;color:#333;background-color:#fff;border-top-width:1px;border-bottom-width:1px;}
 .tg th{font-family:Arial, sans-serif;font-size:14px;font-weight:normal;padding:10px 5px;border-style:solid;border-width:0px;overflow:hidden;word-break:normal;border-color:#ccc;color:#333;background-color:#f0f0f0;border-top-width:1px;border-bottom-width:1px;}
-.tg .tg-zlxi{font-weight:bold;font-family:"Lucida Sans Unicode", "Lucida Grande", sans-serif !important;;vertical-align:top}
-.tg .tg-ump5{font-family:"Lucida Sans Unicode", "Lucida Grande", sans-serif !important;;vertical-align:top}
-.tg .tg-mang{background-color:#f9f9f9;font-family:"Lucida Sans Unicode", "Lucida Grande", sans-serif !important;;text-align:center;vertical-align:top}
-.tg .tg-k9ij{font-family:"Lucida Sans Unicode", "Lucida Grande", sans-serif !important;;text-align:center;vertical-align:top}
-.tg .tg-qxyi{background-color:#f9f9f9;font-family:"Lucida Sans Unicode", "Lucida Grande", sans-serif !important;;vertical-align:top}
+.tg .tg-ufcl{font-size:20px;font-family:Tahoma, Geneva, sans-serif !important;;text-align:center;vertical-align:top}
+.tg .tg-h4th{background-color:#f9f9f9;font-weight:bold;font-size:20px;font-family:Tahoma, Geneva, sans-serif !important;;text-align:center;vertical-align:top}
+.tg .tg-cihi{background-color:#f9f9f9;font-size:20px;font-family:Tahoma, Geneva, sans-serif !important;;text-align:center;vertical-align:top}
+.tg .tg-8c1j{font-size:20px;font-family:Tahoma, Geneva, sans-serif !important;;vertical-align:top}
+.tg .tg-jo60{font-weight:bold;font-size:20px;font-family:Tahoma, Geneva, sans-serif !important;;vertical-align:top}
+.tg .tg-kyai{font-weight:bold;font-size:20px;font-family:Tahoma, Geneva, sans-serif !important;;text-align:center;vertical-align:top}
+.tg .tg-6sx4{background-color:#f9f9f9;font-size:20px;font-family:Tahoma, Geneva, sans-serif !important;;vertical-align:top}
 </style>
-<table class="tg">
+<table class="tg" align="center">
   <tr>
-    <th class="tg-zlxi" colspan="4">TABLE 2. Informations for tested models.</th>
+    <th class="tg-jo60" colspan="4">TABLE 2. Informations for tested models.</th>
   </tr>
   <tr>
-    <td class="tg-ump5"></td>
-    <td class="tg-mang">AIC</td>
-    <td class="tg-k9ij">BIC</td>
-    <td class="tg-mang">LogLik</td>
+    <td class="tg-8c1j"></td>
+    <td class="tg-h4th">AIC</td>
+    <td class="tg-kyai">BIC</td>
+    <td class="tg-h4th">LogLik</td>
   </tr>
   <tr>
-    <td class="tg-ump5">Model 1: <br>              Logit(P) = s(birth year) + r(study ID) + <br>                               f(source of population) + f(diagnostic test) + <br>                               f(ELIZA kits) + f(research year)</td>
-    <td class="tg-mang">1716.444</td>
-    <td class="tg-k9ij">1895.216</td>
-    <td class="tg-mang">-808.6935 (df=49.53)</td>
+    <td class="tg-8c1j">Model 1: <br>Logit(P) = s(birth year) + r(study ID) + <br>                 f(source of population) + f(diagnostic test) + <br>                 f(ELIZA kits) + f(research year)</td>
+    <td class="tg-cihi">1716.444</td>
+    <td class="tg-ufcl">1895.216</td>
+    <td class="tg-cihi">-808.6935 (df=49.53)</td>
   </tr>
   <tr>
-    <td class="tg-ump5">Model 2:<br>              Logit(P) = s(birth year) + r(study ID) + <br>                               f(diagnostic test)</td>
-    <td class="tg-mang">1730.349</td>
-    <td class="tg-k9ij">1904.178</td>
-    <td class="tg-mang">-817.0157 (df=48.16)</td>
+    <td class="tg-8c1j">Model 2: <br>Logit(P) = s(birth year) + r(study ID) + <br>                 f(diagnostic test)</td>
+    <td class="tg-cihi">1730.349</td>
+    <td class="tg-ufcl">1904.178</td>
+    <td class="tg-cihi">-817.0157 (df=48.16)</td>
   </tr>
   <tr>
-    <td class="tg-ump5">Model 3: <br>              Logit(P) = s(birth year) + r(study ID)</td>
-    <td class="tg-mang">1731.451</td>
-    <td class="tg-k9ij">1906.366</td>
-    <td class="tg-mang">-817.2658 (df=48.46)</td>
+    <td class="tg-8c1j">Model 3: <br>Logit(P) = s(birth year) + r(study ID)</td>
+    <td class="tg-cihi">1731.451</td>
+    <td class="tg-ufcl">1906.366</td>
+    <td class="tg-cihi">-817.2658 (df=48.46)</td>
   </tr>
   <tr>
-    <td class="tg-ump5">Abbreviations and definitions:<br>AIC: Akaike’s information criterion; <br>BIC: Bayesian information criterion; <br>LogLik: Log-likelihood;<br>P: prevalence; <br>s: penalized cubic spline; <br>r: random effect; <br>f: fixed effect; <br>df: degree of freedom.</td>
-    <td class="tg-qxyi"></td>
-    <td class="tg-ump5"></td>
-    <td class="tg-qxyi"></td>
+    <td class="tg-8c1j">Abbreviations and definitions: <br>AIC: Akaike’s information criterion; <br>BIC: Bayesian information criterion; <br>LogLik: Log-likelihood;<br>P: prevalence; <br>s: penalized cubic spline; <br>r: random effect; <br>f: fixed effect; <br>df: degree of freedom.</td>
+    <td class="tg-6sx4"></td>
+    <td class="tg-8c1j"></td>
+    <td class="tg-6sx4"></td>
   </tr>
 </table>
 
-
 ---
 
+### Summary from Model 1 comparable to [Table 3](http://rpubs.com/winterwang/table3)
 ```{r, echo=FALSE, message=FALSE, warning=FALSE}
 library(meta)
 library(metafor)
@@ -218,4 +220,8 @@ res0 <- gam(cbind(mp,n_total-mp) ~ s(birth.year_high,bs="cr")+ s(No,bs="re")+Sou
             #+ adultdults.or.childhildren, 
             data = com_data, weights=wt, family="binomial"(link=logit), method="REML")
 summary(res0)
+
 ```
+
+
+---
