@@ -280,7 +280,7 @@ class: middle, center
 ---
 class: middle, center
 
-background-image: url(fig/Figure2.tiff)
+background-image: url(fig/Figure_2.png)
 background-size: contain
 
 
