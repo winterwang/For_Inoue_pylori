@@ -225,3 +225,84 @@ summary(res0)
 
 
 ---
+
+## Table 4 Predicted Prevalence of _H. pylori_ infection from 1908 to 2003
+
+```{r eval=require('DT'), tidy=FALSE, echo=FALSE, warning=FALSE, message=FALSE}
+library(visreg)
+library(plyr)
+use(com_data)
+plotdata_res0 <- visreg(res0, type = "contrast", plot = F)
+smooths <- ldply(plotdata_res0, function(part)   
+  data.frame(Variable = part$meta$x, 
+             x=part$fit[[part$meta$x]], 
+             smooth=part$fit$visregFit, 
+             lower=part$fit$visregLwr, 
+             upper=part$fit$visregUpr))
+
+
+lg=smooths$smooth
+p=exp(lg)/(1+exp(lg))
+p_low <- exp(smooths$lower)/(1+exp(smooths$lower))
+p_high <- exp(smooths$upper)/(1+exp(smooths$upper))
+
+
+dt_plot <- data.frame(smooths$x[1:101],p[1:101], p_low[1:101], p_high[1:101])
+
+names(dt_plot) <- c("Birthyear", "Prevalence", "95%CI_low", "95%CI_high")
+
+
+dt_plot <- format(dt_plot, digits=2)
+datatable(
+  dt_plot, rownames=FALSE,
+  extensions = list(Scroller=NULL,  FixedColumns=list(leftColumns=2)),
+  options = list(
+    dom = 'T<"clear">lfrtip',
+    columnDefs = list(list(width = '20%', targets = list(2,3))),
+    deferRender=TRUE,
+    scrollX=TRUE,scrollY=400,
+    scrollCollapse=TRUE,
+    pageLength = 100, lengthMenu = c(10,50,100,150)
+  )
+)
+
+```
+
+
+
+---
+
+class: middle, center
+
+# PLOT
+
+
+---
+class: middle, center
+
+background-image: url(fig/Figure2.tiff)
+background-size: contain
+
+
+---
+class: middle, center
+
+# [Interactive PLOT](http://rpubs.com/winterwang/bubbleplot)
+
+
+---
+
+class: middle, center
+
+background-image: url(fig/bubbleplot.png)
+background-size: contain
+
+
+---
+class: center, middle, inverse
+
+# Thanks! 
+### Slides made by using [`xaringan`](https://github.com/yihui/xaringan) package 
+### Slides address: [https://winterwang.github.io/For_Inoue_pylori/#1](https://winterwang.github.io/For_Inoue_pylori/#1)
+
+
