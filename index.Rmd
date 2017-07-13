@@ -59,6 +59,8 @@ class: middle
 
   - 4 studies reported age groups with **data collection year unavailable**, year of publication was used instead of data collection period.
 
++ The results of risk of bias diagnosis is available [here(←click)](http://rpubs.com/winterwang/riskofbias)
+
 ---
 
 ### Data extraction example
@@ -386,6 +388,74 @@ class: middle, center
 
 background-image: url(fig/bubbleplot.png)
 background-size: contain
+
+---
+
+class: middle
+
+
+## Further analyses include:
+
+1. **Stratification by study [qualities(← summary of the results of risk of bias diagnosis)](http://rpubs.com/winterwang/riskofbias)**
+    + good studies met $\geqslant$ 7 criteria in the risk of bias diagnosis
+
+    + poor studies met $<$ 7 criteria in the risk of bias diagnosis
+
+    + See Supplement Figure [1](https://github.com/winterwang/H.pyloriMeta/raw/master/for%20submission/SupplementFigure1Goodpaper.pdf) & [2](https://github.com/winterwang/H.pyloriMeta/raw/master/for%20submission/SupplementFigure2poor.pdf)
+
+2. Stratification of research year (cutoff = 2000) (See Supplement Figure [3](https://github.com/winterwang/H.pyloriMeta/raw/master/for%20submission/SupplementFigure3_2000.pdf) & [4](https://github.com/winterwang/H.pyloriMeta/raw/master/for%20submission/SupplementFigure4_2000.pdf))
+
+
+---
+class: middle, center
+
+### Paper submitted to [Scientific Reports](https://www.nature.com/srep/):
+<style type="text/css">
+.tg  {border-collapse:collapse;border-spacing:0;}
+.tg td{font-family:Arial, sans-serif;font-size:14px;padding:10px 5px;border-style:solid;border-width:1px;overflow:hidden;word-break:normal;}
+.tg th{font-family:Arial, sans-serif;font-size:14px;font-weight:normal;padding:10px 5px;border-style:solid;border-width:1px;overflow:hidden;word-break:normal;}
+.tg .tg-21yu{background-color:#f8ff00;vertical-align:top}
+.tg .tg-oh9j{font-weight:bold;font-family:"Arial Black", Gadget, sans-serif !important;;vertical-align:top}
+.tg .tg-yw4l{vertical-align:top}
+</style>
+<table class="tg"  align="center" border='3'>
+  <tr>
+    <th class="tg-oh9j">Stage</th>
+    <th class="tg-oh9j">Start Date</th>
+  </tr>
+    <tr>
+    <td class="tg-21yu">Decision Started</td>
+    <td class="tg-21yu">4th July 17</td>
+  </tr>
+  <tr>
+    <td class="tg-yw4l">Manuscript assigned to peer-reviewer/s</td>
+    <td class="tg-yw4l">4th July 17</td>
+  </tr>
+  <tr>
+    <td class="tg-yw4l">Manuscript Assigned to Peer-Reviewer/s</td>
+    <td class="tg-yw4l">1st June 17</td>
+  </tr>
+  <tr>
+    <td class="tg-yw4l">Manuscript Assigned to Editor</td>
+    <td class="tg-yw4l">16th May 17</td>
+  </tr>
+  <tr>
+    <td class="tg-yw4l">Manuscript Submitted</td>
+    <td class="tg-yw4l">11th May 17</td>
+  </tr>
+  <tr>
+    <td class="tg-yw4l">Submission Not Complete</td>
+    <td class="tg-yw4l">2nd May 17</td>
+  </tr>
+  <tr>
+    <td class="tg-yw4l">Quality Check Started</td>
+    <td class="tg-yw4l">25th April 17</td>
+  </tr>
+  <tr>
+    <td class="tg-yw4l">Submission Not Complete</td>
+    <td class="tg-yw4l">24th April 17</td>
+  </tr>
+</table>
 
 
 ---
