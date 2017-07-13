@@ -12,47 +12,76 @@ output:
       highlightLines: true
       countIncrementalSlides: false
 ---
-class: center, middle 
+class: center, middle
 
 # METHODS
+
 ---
+class: middle
 
- 
-## Data sources and extraction
+## Data extraction (1)
 
-.pull-left[
-+ **PubMed** and **Embase** were searched for studies reported prevalence of _H. pylori_ infection among Japanese population (until 30 June, 2016). 
 
 + 43 papers  <br>
-   $+$ JPHC Cohort II <br> 
+   $+$ JPHC Cohort II <br>
    $+$ JPHC-NEXT Cohort Study <br>
-   included for meta-regression analysis [(Table 1)](http://rpubs.com/winterwang/288338).
-+ Prevalence of _H. pylori_ infection reported by birth year group of participants<sup>[1~7]</sup>.  
+   included for meta-regression analysis [(Table 1)(←click here)](http://rpubs.com/winterwang/288338).
 
++ Prevalence of _H. pylori_ infection reported by birth year group of participants<sup>[1~7]</sup>.
+
+    1. Ueda J. **_Helicobacter._** 2014;
+    1. Watanabe M. **_Cancer Sci._** 2015;<br>
+    1. Reploge M.L. **_Int J Epidemiol._** 1996;
+    1. Shimoyama T. **_Gastric Cancer._** 2012;<br>
+    1. Shimatani T. **_J Gastroenterol Hepatol._** 2005;
+    1. JPHC Cohort II;
+    1. JPHC-NEXT
+
+
+???
+
+出生年別のデータが直接報告されていた場合，そのまま使います．
+
+
+---
+class: middle
+
+
+## Data extraction (2)
+
++ 38 studies reported prevalence with age groups.
+  - 34 studies reported data collection period:
+
+      - Example:
+           + 60-70 years old group;
+           + data collection done in 1990;
+           + birth year should be 1920~1930.
+
+  - 4 studies reported age groups with **data collection year unavailable**, year of publication was used instead of data collection period.
+
+---
+
+### Data extraction example
+#### (rules are decided by researchers)
+Sasazuki, S. et al. _Cancer Epidemiol Biomarkers Prev_ 15, 1341–1347 (2006).(Study No. 12)
+
+.pull-left[
+![Sasazuki](fig/Sasazuki.png)
 ]
 
 .pull-right[
++ Control samples of this study (JPHC I/II) were collected during 1990-1993.<br><br>⇒ 1990 (the earlier one) used as the year of research
 
-+ 38 studies reported prevalence with age groups. 
-  - 34 studies reported data collection period: 
-  
-  - Example: <br>60-70 years old group; <br>data collection done in 1990;<br> birth year should be 1920~1930.
-  
-  - 4 studies reported age groups with data collection year unavailable, year of publication was used instead of data collection period.
++ Birth year groups:
+    - 40-49 ⇒ 1941-**1950**
+    - 50-59 ⇒ 1931-**1940**
+    - 60-69 ⇒ 1921-**1930**
+    - Many studies reported no upper limit of age (e.g. 70 or older) ⇒ **1920**
 ]
-
-.footnote[
-[1] Ueda J. **_Helicobacter._** 2014; [2] Watanabe M. **_Cancer Sci._** 2015;<br>
-[3] Reploge M.L. **_Int J Epidemiol._** 1996; [4] Shimoyama T. **_Gastric Cancer._** 2012;<br> [5] Shimatani T. **_J Gastroenterol Hepatol._** 2005; [6] JPHC Cohort II; [7] JPHC-NEXT
-]
----
-class: center, middle 
-
-# STATISTICAL ANALYSIS
 
 ---
 
-## 273 Data Points from 45 Studies were available for meta-regression
+### 273 Data Points from 45 Studies were available for meta-regression
 
 ```{r eval=require('DT'), tidy=FALSE, echo=FALSE, warning=FALSE}
 com_data <- read.csv("complete_data.csv")
@@ -70,11 +99,18 @@ datatable(
 )
 ```
 
+
+---
+class: center, middle
+
+# STATISTICAL ANALYSIS
+
+
 ---
 
 class: middle
 
-## Step 1: Weight Calculation
+## Step 1: Data Point Weight Calculation
 
 ```{r, eval=FALSE}
 library(meta)
@@ -85,12 +121,12 @@ library(mgcv)
 
 
 meta <- metaprop( event = Number_of_Positive,
-                  n     = Number_of_Subjects_in_the_corresponding_group,   
+                  n     = Number_of_Subjects_in_the_corresponding_group,
                   byvar = Birth_Year,
-                  sm    = "PLOGIT",    # Logit transformation 
+                  sm    = "PLOGIT",    # Logit transformation
              method.tau = "REML")      # Restricted Maximum-likelihood
-                                       # estimator to estimate the 
-                                       # between-study variance 
+                                       # estimator to estimate the
+                                       # between-study variance
 
 
 weight<-meta$w.random # Weight of each data point extracted
@@ -98,88 +134,32 @@ weight<-meta$w.random # Weight of each data point extracted
 
 
 ---
+class: middle
 
-### Step 2: Meta-regression (Generalized Additive Mixed Model, GAMM)
+## Step 2: Meta-regression (Generalized Additive Mixed Model, GAMM)
 
 ```{r, eval=FALSE}
 ########################   MODEL 1  ###############################
 res1 <- gam(cbind(event,n) ~ s(Birth_Year, bs="cr") +
-                                      # Cubic Spline Regression 三次スプライン曲線
-              s(Study_ID, bs="re") +  # Study ID as random effect 
-              Source_of_population +  # Community OR Clinical based 
-              Specimen_type        +  # Serum OR Others (urinary, salivary, stool, biopsy)
-              Kit.from             +  # Antigen derived from demostic or foreign
-              early,                  # Data collection period, cutoff = 2000
-              data = data, weights=weight, 
-              family="binomial"(link=logit), method="REML")
-########################   MODEL 2 ################################
-res2 <- gam(cbind(event,n) ~ s(Birth_Year, bs="cr") +
-              s(Study_ID, bs="re") +  
-              Specimen_type,
-              data = data, weights=weight, 
-              family="binomial"(link=logit), method="REML")
-########################   MODEL 3 ################################
-res3 <- gam(cbind(event,n) ~ s(Birth_Year, bs="cr") +
-              s(Study_ID, bs="re"),
-              data = data, weights=weight, 
-              family="binomial"(link=logit), method="REML")
+                        # Cubic Spline Regression 三次スプライン曲線
+s(Study_ID, bs="re") +  # Study ID as random effect
+
+Source_of_population +  # Community OR Clinical based
+
+Specimen_type        +  # Serum OR Others (urinary, salivary, stool, biopsy)
+
+Kit.from             +  # Antigen derived from demostic or foreign
+
+early,                  # Data collection period, cutoff = 2000
+
+data = data, weights=weight,
+
+family="binomial"(link=logit), method="REML")
 ```
 
-
----
-class: middle
-
-<style type="text/css">
-.tg  {border-collapse:collapse;border-spacing:0;border-color:#ccc;}
-.tg td{font-family:Arial, sans-serif;font-size:14px;padding:10px 5px;border-style:solid;border-width:0px;overflow:hidden;word-break:normal;border-color:#ccc;color:#333;background-color:#fff;border-top-width:1px;border-bottom-width:1px;}
-.tg th{font-family:Arial, sans-serif;font-size:14px;font-weight:normal;padding:10px 5px;border-style:solid;border-width:0px;overflow:hidden;word-break:normal;border-color:#ccc;color:#333;background-color:#f0f0f0;border-top-width:1px;border-bottom-width:1px;}
-.tg .tg-ufcl{font-size:20px;font-family:Tahoma, Geneva, sans-serif !important;;text-align:center;vertical-align:top}
-.tg .tg-h4th{background-color:#f9f9f9;font-weight:bold;font-size:20px;font-family:Tahoma, Geneva, sans-serif !important;;text-align:center;vertical-align:top}
-.tg .tg-cihi{background-color:#f9f9f9;font-size:20px;font-family:Tahoma, Geneva, sans-serif !important;;text-align:center;vertical-align:top}
-.tg .tg-8c1j{font-size:20px;font-family:Tahoma, Geneva, sans-serif !important;;vertical-align:top}
-.tg .tg-jo60{font-weight:bold;font-size:20px;font-family:Tahoma, Geneva, sans-serif !important;;vertical-align:top}
-.tg .tg-kyai{font-weight:bold;font-size:20px;font-family:Tahoma, Geneva, sans-serif !important;;text-align:center;vertical-align:top}
-.tg .tg-6sx4{background-color:#f9f9f9;font-size:20px;font-family:Tahoma, Geneva, sans-serif !important;;vertical-align:top}
-</style>
-<table class="tg" align="center">
-  <tr>
-    <th class="tg-jo60" colspan="4">TABLE 2. Informations for tested models.</th>
-  </tr>
-  <tr>
-    <td class="tg-8c1j"></td>
-    <td class="tg-h4th">AIC</td>
-    <td class="tg-kyai">BIC</td>
-    <td class="tg-h4th">LogLik</td>
-  </tr>
-  <tr>
-    <td class="tg-8c1j">Model 1: <br>Logit(P) = s(birth year) + r(study ID) + <br>                 f(source of population) + f(diagnostic test) + <br>                 f(ELIZA kits) + f(research year)</td>
-    <td class="tg-cihi">1716.444</td>
-    <td class="tg-ufcl">1895.216</td>
-    <td class="tg-cihi">-808.6935 (df=49.53)</td>
-  </tr>
-  <tr>
-    <td class="tg-8c1j">Model 2: <br>Logit(P) = s(birth year) + r(study ID) + <br>                 f(diagnostic test)</td>
-    <td class="tg-cihi">1730.349</td>
-    <td class="tg-ufcl">1904.178</td>
-    <td class="tg-cihi">-817.0157 (df=48.16)</td>
-  </tr>
-  <tr>
-    <td class="tg-8c1j">Model 3: <br>Logit(P) = s(birth year) + r(study ID)</td>
-    <td class="tg-cihi">1731.451</td>
-    <td class="tg-ufcl">1906.366</td>
-    <td class="tg-cihi">-817.2658 (df=48.46)</td>
-  </tr>
-  <tr>
-    <td class="tg-8c1j">Abbreviations and definitions: <br>AIC: Akaike’s information criterion; <br>BIC: Bayesian information criterion; <br>LogLik: Log-likelihood;<br>P: prevalence; <br>s: penalized cubic spline; <br>r: random effect; <br>f: fixed effect; <br>df: degree of freedom.</td>
-    <td class="tg-6sx4"></td>
-    <td class="tg-8c1j"></td>
-    <td class="tg-6sx4"></td>
-  </tr>
-</table>
-
 ---
 
-### Summary from Model 1 comparable to [Table 3](http://rpubs.com/winterwang/table3)
+#### Summary from Model 1 comparable to [Table 3 ← click here](http://rpubs.com/winterwang/table3)
 ```{r, echo=FALSE, message=FALSE, warning=FALSE}
 library(meta)
 library(metafor)
@@ -216,28 +196,137 @@ com_data$early=ifelse(com_data$Research.Year<2000,"early","late")
 
 com_data$No <- as.factor(com_data$No)
 res0 <- gam(cbind(mp,n_total-mp) ~ s(birth.year_high,bs="cr")+ s(No,bs="re")+Source.population+Specimen.type+
-              kit.from+early, 
-            #+ adultdults.or.childhildren, 
+              kit.from+early,
+            #+ adultdults.or.childhildren,
             data = com_data, weights=wt, family="binomial"(link=logit), method="REML")
 summary(res0)
+```
 
+
+
+---
+class: middle
+
+## Step 3: Model Modification
+
+```{r, eval=FALSE}
+########################   MODEL 2 ################################
+
+res2 <- gam(cbind(event,n) ~ s(Birth_Year, bs="cr") +
+
+              s(Study_ID, bs="re") +
+
+              Specimen_type,
+
+              data = data, weights=weight,
+
+              family="binomial"(link=logit), method="REML")
+
+
+########################   MODEL 3 ################################
+res3 <- gam(cbind(event,n) ~ s(Birth_Year, bs="cr") +
+
+              s(Study_ID, bs="re"),
+
+              data = data, weights=weight,
+
+              family="binomial"(link=logit), method="REML")
 ```
 
 
 ---
+class: middle
 
-## Table 4 Predicted Prevalence of _H. pylori_ infection from 1908 to 2003
+<style type="text/css">
+.tg  {border-collapse:collapse;border-spacing:0;border-color:#ccc;}
+.tg td{font-family:Arial, sans-serif;font-size:14px;padding:10px 5px;border-style:solid;border-width:0px;overflow:hidden;word-break:normal;border-color:#ccc;color:#333;background-color:#fff;border-top-width:1px;border-bottom-width:1px;}
+.tg th{font-family:Arial, sans-serif;font-size:14px;font-weight:normal;padding:10px 5px;border-style:solid;border-width:0px;overflow:hidden;word-break:normal;border-color:#ccc;color:#333;background-color:#f0f0f0;border-top-width:1px;border-bottom-width:1px;}
+.tg .tg-ufcl{font-size:20px;font-family:Tahoma, Geneva, sans-serif !important;;text-align:center;vertical-align:top}
+.tg .tg-h4th{background-color:#f9f9f9;font-weight:bold;font-size:20px;font-family:Tahoma, Geneva, sans-serif !important;;text-align:center;vertical-align:top}
+.tg .tg-cihi{background-color:#f9f9f9;font-size:20px;font-family:Tahoma, Geneva, sans-serif !important;;text-align:center;vertical-align:top}
+.tg .tg-8c1j{font-size:20px;font-family:Tahoma, Geneva, sans-serif !important;;vertical-align:top}
+.tg .tg-jo60{font-weight:bold;font-size:20px;font-family:Tahoma, Geneva, sans-serif !important;;vertical-align:top}
+.tg .tg-kyai{font-weight:bold;font-size:20px;font-family:Tahoma, Geneva, sans-serif !important;;text-align:center;vertical-align:top}
+.tg .tg-6sx4{background-color:#f9f9f9;font-size:20px;font-family:Tahoma, Geneva, sans-serif !important;;vertical-align:top}
+</style>
+<table class="tg" align="center">
+  <tr>
+    <th class="tg-jo60" colspan="4">TABLE 2. Informations for tested models.</th>
+  </tr>
+  <tr>
+    <td class="tg-8c1j"></td>
+    <td class="tg-h4th">AIC</td>
+    <td class="tg-kyai">BIC</td>
+    <td class="tg-h4th">LogLik</td>
+  </tr>
+  <tr>
+    <td class="tg-8c1j">Model 1: <br>Logit(P) = s(birth year) + r(study ID) + <br>                 f(source of population) + f(diagnostic test) + f(ELIZA kits) + f(research year)</td>
+    <td class="tg-cihi">1716.444</td>
+    <td class="tg-ufcl">1895.216</td>
+    <td class="tg-cihi">-808.6935 (df=49.53)</td>
+  </tr>
+  <tr>
+    <td class="tg-8c1j">Model 2: <br>Logit(P) = s(birth year) + r(study ID) + <br>                 f(diagnostic test)</td>
+    <td class="tg-cihi">1730.349</td>
+    <td class="tg-ufcl">1904.178</td>
+    <td class="tg-cihi">-817.0157 (df=48.16)</td>
+  </tr>
+  <tr>
+    <td class="tg-8c1j">Model 3: <br>Logit(P) = s(birth year) + r(study ID)</td>
+    <td class="tg-cihi">1731.451</td>
+    <td class="tg-ufcl">1906.366</td>
+    <td class="tg-cihi">-817.2658 (df=48.46)</td>
+  </tr>
+  <tr>
+    <td class="tg-8c1j">Abbreviations and definitions: <br>AIC: Akaike’s information criterion; <br>BIC: Bayesian information criterion; <br>LogLik: Log-likelihood;<br>P: prevalence; <br>s: penalized cubic spline; <br>r: random effect; <br>f: fixed effect; <br>df: degree of freedom.</td>
+    <td class="tg-6sx4"></td>
+    <td class="tg-8c1j"></td>
+    <td class="tg-6sx4"></td>
+  </tr>
+</table>
+
+
+---
+
+## Step 4: Point Estimation
+
+```{r eval=FALSE}
+library(visreg) # Visualization of Regression Models
+library(plyr)
+use(com_data)
+plotdata_res0 <- visreg(res0, type = "contrast", plot = F)
+smooths <- ldply(plotdata_res0, function(part)
+  data.frame(Variable = part$meta$x,
+             x=part$fit[[part$meta$x]],
+             smooth=part$fit$visregFit,
+             lower=part$fit$visregLwr,
+             upper=part$fit$visregUpr))
+lg=smooths$smooth
+p=exp(lg)/(1+exp(lg))
+p_low <- exp(smooths$lower)/(1+exp(smooths$lower))
+p_high <- exp(smooths$upper)/(1+exp(smooths$upper))
+
+
+dt_plot <- data.frame(smooths$x[1:101],p[1:101], p_low[1:101], p_high[1:101])
+
+names(dt_plot) <- c("Birthyear", "Prevalence", "95%CI_low", "95%CI_high")
+print(dt_plot)
+```
+
+---
+
+## Table 4. Predicted Prevalence of _H. pylori_ infection from 1908 to 2003
 
 ```{r eval=require('DT'), tidy=FALSE, echo=FALSE, warning=FALSE, message=FALSE}
 library(visreg)
 library(plyr)
 use(com_data)
 plotdata_res0 <- visreg(res0, type = "contrast", plot = F)
-smooths <- ldply(plotdata_res0, function(part)   
-  data.frame(Variable = part$meta$x, 
-             x=part$fit[[part$meta$x]], 
-             smooth=part$fit$visregFit, 
-             lower=part$fit$visregLwr, 
+smooths <- ldply(plotdata_res0, function(part)
+  data.frame(Variable = part$meta$x,
+             x=part$fit[[part$meta$x]],
+             smooth=part$fit$visregFit,
+             lower=part$fit$visregLwr,
              upper=part$fit$visregUpr))
 
 
@@ -275,6 +364,7 @@ datatable(
 class: middle, center
 
 # PLOT
+## by package [`ggplot2`](http://ggplot2.org/)
 
 
 ---
@@ -288,7 +378,7 @@ background-size: contain
 class: middle, center
 
 # [Interactive PLOT](http://rpubs.com/winterwang/bubbleplot)
-
+## Click above ↑
 
 ---
 
@@ -301,8 +391,7 @@ background-size: contain
 ---
 class: center, middle, inverse
 
-# Thanks! 
-### Slides made by using [`xaringan`](https://github.com/yihui/xaringan) package 
-### Slides address: [https://winterwang.github.io/For_Inoue_pylori/#1](https://winterwang.github.io/For_Inoue_pylori/#1)
-
-
+# Thanks!
+### Slides made by [`xaringan`](https://github.com/yihui/xaringan) package
+### Slides address:
+#### [https://winterwang.github.io/For_Inoue_pylori/#1](https://winterwang.github.io/For_Inoue_pylori/#1)
